@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Role;
+use App\Models\Permission;;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RoleFactory extends Factory
@@ -11,28 +12,42 @@ class RoleFactory extends Factory
 
     public function definition()
     {
-        // This factory will not be used for random role generation
-        return [];
+        return [
+            'name' => $this->faker->unique()->word,
+        ];
     }
 
-    public function admin()
+    // Attach permissions to the role
+    public function configure()
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'name' => 'admin',
-                'permissions' => json_encode(['all']),
-            ];
+        return $this->afterCreating(function (Role $role) {
+            $role->permissions()->attach(Permission::inRandomOrder()->limit(3)->pluck('id'));
         });
     }
 
-    public function artist()
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'name' => 'artist',
-                'permissions' => json_encode(['view', 'create', 'update']),
-            ];
-        });
-    }
+    // public function withPermission()
+    // {
+    //     return $this->afterCreating(function (Role $role) {
+    //         $permission = Permission::factory()->create();
+    //         $role->permissions()->attach($permission);
+    //     });
+    // }
+
+    // public function admin()
+    // {
+    //     return $this->state(function (array $attributes) {
+    //         return [
+    //             'name' => 'admin',
+    //         ];
+    //     });
+    // }
+
+    // public function artist()
+    // {
+    //     return $this->state(function (array $attributes) {
+    //         return [
+    //             'name' => 'artist',
+    //         ];
+    //     });
+    // }
 }
-

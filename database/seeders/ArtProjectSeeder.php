@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\ArtProject;
+use App\Models\User;
+use App\Models\Partner;
 
 class ArtProjectSeeder extends Seeder
 {
@@ -13,6 +15,12 @@ class ArtProjectSeeder extends Seeder
      */
     public function run()
     {
-        ArtProject::factory()->count(5)->create();
+        $users = User::all();
+        $partners = Partner::all();
+
+        ArtProject::factory(10)->create()->each(function ($artProject) use ($users, $partners) {
+            $artProject->users()->attach($users->random(3));
+            $artProject->partners()->attach($partners->random(2));
+        });
     }
 }
