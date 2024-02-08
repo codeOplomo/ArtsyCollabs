@@ -41,7 +41,7 @@
                                     </div>
                                     <div class="signup-image">
                                         <figure><img src="images/signup-image.jpg" alt="sign up image"></figure>
-                                        <a href="#" class="signup-image-link">I am already a member</a>
+                                        <a href="{{ route('login')}}" class="signup-image-link">I am already a member</a>
                                     </div>
                                 </div>
                             </div>
@@ -50,5 +50,6 @@
                 </div>
             </div>
         </div>
+        
         
 @endsection

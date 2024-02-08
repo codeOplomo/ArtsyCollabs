@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Partner;
 use Illuminate\Http\Request;
 
 class PartnersController extends Controller
@@ -11,7 +12,8 @@ class PartnersController extends Controller
      */
     public function index()
     {
-        return view('partners.index');
+        $partners = Partner::all();
+        return view('partners.index', compact('partners'));
     }
 
     /**

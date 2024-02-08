@@ -8,21 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Role;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     protected $model = User::class;
 
     public function definition()
@@ -30,17 +19,15 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
+            'phone' => $this->faker->phoneNumber, // Adding phone field
+            'address' => $this->faker->address,  // Adding address field
             'email_verified_at' => now(),
-            'password' => bcrypt('password'), // Default password for all users
+            'password' => bcrypt('password'),
             'remember_token' => Str::random(10),
-            // 'role_id' => Role::inRandomOrder()->first()->id, // Assign a random role
-            'role_id' => 2, 
+            'role_id' => 2, // Default role_id
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

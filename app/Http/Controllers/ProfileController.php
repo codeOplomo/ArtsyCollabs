@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -10,9 +11,12 @@ class ProfileController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return view('profiles.index');
-    }
+{
+    $user = User::where('id', auth()->user()->id)->first(); // Example: Get the logged-in user's data
+    // If you have a specific user profile to display, adjust the query accordingly
+
+    return view('profiles.index', compact('user'));
+}
 
     /**
      * Show the form for creating a new resource.

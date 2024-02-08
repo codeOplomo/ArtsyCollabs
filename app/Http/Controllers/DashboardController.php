@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArtProject;
+use App\Models\Partner;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ArtProjectsController extends Controller
+class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $artProjects = ArtProject::paginate(12);
-        return view('art-projects.index', compact('artProjects'));
+        $artists = User::all(); 
+        $artProjects = ArtProject::all(); 
+        $partners = Partner::all();
+
+        // Pass the users to the view
+        return view('dashboards.dashmin', compact('artists', 'artProjects', 'partners'));
     }
 
     /**
