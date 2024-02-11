@@ -9,6 +9,9 @@ list-type-ulli, .socials {
   margin: 0;
   padding: 0; }
 
+  
+
+
 /* poppins-300 - latin */
 @font-face {
   font-family: 'Poppins';
@@ -324,7 +327,8 @@ input {
   border-bottom: 1px solid #999;
   padding: 6px 30px;
   font-family: Poppins;
-  box-sizing: border-box; }
+  /* box-sizing: border-box; */
+ }
   input::-webkit-input-placeholder {
     color: #999; }
   input::-moz-placeholder {

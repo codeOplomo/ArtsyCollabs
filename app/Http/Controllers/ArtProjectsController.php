@@ -28,9 +28,31 @@ class ArtProjectsController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
+{
+    try {
+        $rules = [
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'budget' => 'required|numeric',
+            'status' => 'required|in:active,inactive',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ];
+
+        $request->validate($rules);
+
+        $artProject = ArtProject::create($request->all());
+
+        // Optionally, you can associate users or partners with the art project
+        // $artProject->users()->sync($request->input('user_ids'));
+        // $artProject->partners()->sync($request->input('partner_ids'));
+
+        return response()->json(['success' => true, 'message' => 'Art project successfully created.', 'artProject' => $artProject]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
+}
+
 
     /**
      * Display the specified resource.

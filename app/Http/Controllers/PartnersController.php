@@ -28,9 +28,33 @@ class PartnersController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
+{
+    try {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_info' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        // Create a new partner with the validated data
+        $partner = Partner::create($validatedData);
+
+        // You can customize the response as needed
+        return response()->json([
+            'success' => true,
+            'partner' => $partner,
+            'message' => 'Partner created successfully', // You can customize the success message
+        ]);
+    } catch (\Exception $e) {
+        // Handle the exception and return an error response
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to create partner. ' . $e->getMessage(), // You can customize the error message
+        ]);
     }
+}
+
 
     /**
      * Display the specified resource.

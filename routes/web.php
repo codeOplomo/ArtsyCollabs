@@ -38,13 +38,14 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile-admin', [DashboardController::class, 'profile'])->name('admin.profile');
 
     Route::resource('profile', ProfileController::class)->only(['index', 'store']);
     Route::resource('art-projects', ArtProjectsController::class)->only(['index', 'store']);
     Route::resource('partners', PartnersController::class)->only(['index', 'store']);
 });
+
 
 
 // Route::get('/dashboard', function () {
@@ -53,3 +54,5 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
