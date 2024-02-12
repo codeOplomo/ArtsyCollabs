@@ -25,6 +25,13 @@ class ArtProject extends Model
         return $this->belongsToMany(User::class);
     }
 
+    // ArtProject model
+    public function artProjects()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+
     // ArtProject to Partners relationship (many-to-many)
     public function partners()
     {

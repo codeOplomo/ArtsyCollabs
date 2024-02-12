@@ -97,7 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${newArtProject.budget}</td>
                         <td>${newArtProject.start_date}</td>
                         <td>${newArtProject.end_date}</td>
-                        <!-- Add other columns as needed -->
+                        <td>
+                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editArtProjectModal_${newArtProject.id}">Edit</button>
+                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteArtProjectModal_${newArtProject.id}" onclick="deleteArtProject(${newArtProject.id}, 'deleteArtProjectModal_${newArtProject.id}')">Delete</button>
+                <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#assignArtProjectModal_${newArtProject.id}">Assign</button>
+                <!-- Add other buttons as needed -->
+            </td>
                     </tr>
                 `;
 
@@ -198,5 +203,114 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById('add-partner-form').style.display = 'none';
     });
+
+    // Function to delete art project
+    function deleteArtProject(projectId) {
+        // Perform AJAX request to delete the art project
+        fetch(`/art-projects/${projectId}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Delete the corresponding row from the table
+                    const rowToDelete = document.getElementById(`artProjectRow_${projectId}`);
+                    rowToDelete.parentNode.removeChild(rowToDelete);
+    
+                    // Show success message with SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                    }).then(() => {
+                        // Manually close the delete modal
+                        const deleteModal = document.getElementById(`deleteArtProjectModal_${projectId}`);
+                        const modalInstance = bootstrap.Modal.getInstance(deleteModal);
+                        modalInstance.hide();
+                    });
+                } else {
+                    // Show error message with SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Show error message with SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An unexpected error occurred.',
+                });
+            });
+    }
+    
+    function assignArtist(projectId, artistId, artistName) {
+        // Send an AJAX request to assign the artist to the project
+        // ...
+    
+        console.log(`Assigning artist ${artistName} to project ${projectId}, artist ID: ${artistId}`);
+        // Update the UI
+        var assignedArtistsList = document.getElementById('assignedArtists');
+        var availableArtistsButton = document.querySelector('[data-artist-id="' + artistId + '"]');
+    
+        // Create a new list item for the assigned artist
+        var listItem = document.createElement('li');
+        listItem.textContent = artistName;
+    
+        // Create a button to remove the assigned artist
+        var removeButton = document.createElement('button');
+        removeButton.setAttribute('type', 'button');
+        removeButton.classList.add('btn', 'btn-sm', 'btn-danger');
+        removeButton.textContent = 'Remove';
+        removeButton.addEventListener('click', function () {
+            removeAssignedArtist(projectId, artistId);
+        });
+    
+        // Append the remove button to the list item
+        listItem.appendChild(removeButton);
+    
+        // Append the list item to the assigned artists list
+        assignedArtistsList.appendChild(listItem);
+    
+        // Remove the assigned artist button from the available artists list
+        availableArtistsButton.remove();
+    }
+    
+
+    function removeAssignedArtist(projectId, artistId, artistName) {
+        // Assuming you have an AJAX function to handle the removal
+        // Make an AJAX request to your server to remove the artist from the project
+    
+        // Once the removal is successful, update the UI
+        // Add the artist back to the available artists list
+        var availableArtistsSection = document.getElementById('editAssignedArtists');
+        var addButton = document.createElement('button');
+        addButton.setAttribute('type', 'button');
+        addButton.classList.add('btn', 'btn-success');
+        addButton.textContent = 'Assign ' + artistName;
+        addButton.onclick = function () {
+            assignArtist(projectId, artistId, artistName);
+        };
+    
+        availableArtistsSection.appendChild(addButton);
+    
+        // Remove the artist from the assigned artists list
+        var assignedArtistsList = document.getElementById('assignedArtists');
+        var assignedArtists = assignedArtistsList.getElementsByTagName('li');
+    
+        for (var i = 0; i < assignedArtists.length; i++) {
+            var li = assignedArtists[i];
+            if (li.textContent.includes(artistName)) {
+                li.remove();
+                break;
+            }
+        }
+    }
+    
+    
 
 });

@@ -40,9 +40,17 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile-admin', [DashboardController::class, 'profile'])->name('admin.profile');
+    Route::post('/assign/{projectId}', [DashboardController::class, 'assign'])->name('assign');
+    Route::get('/assign-user/{projectId}/{projectName}/{projectDescription}', [DashboardController::class, 'assignUser'])->name('assign.user');
+
 
     Route::resource('profile', ProfileController::class)->only(['index', 'store']);
-    Route::resource('art-projects', ArtProjectsController::class)->only(['index', 'store']);
+    Route::resource('art-projects', ArtProjectsController::class)->only(['index', 'store', 'destroy']);
+
+    Route::post('/assign-artist/{projectId}', [ArtProjectsController::class, 'assignArtist'])->name('assign-artist');
+    Route::post('/assign-partner/{projectId}', [PartnersController::class, 'assignPartner'])->name('assign-partner');
+
+
     Route::resource('partners', PartnersController::class)->only(['index', 'store']);
 });
 
@@ -52,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
 //     return view('dashboard.dashmin');
 // })->name('dashboard');
 
+    // Route::post('/art-projects/{projectId}/assign-artist/{artistId}', [ArtProjectsController::class, 'assignArtist']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
