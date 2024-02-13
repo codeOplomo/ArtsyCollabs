@@ -61,7 +61,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'status' => 'active', // Assuming you have a 'status' field
-            'role_id' => 1, // Assuming you have a 'role_id' field and '2' signifies a default role
+            'role_id' => 2, // Assuming you have a 'role_id' field and '2' signifies a default role
         ]);
     }
 

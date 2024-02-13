@@ -42,6 +42,77 @@
         </div>
     </div>
 
+    <div class="container-fluid pt-4 px-4" id="content-container">
+        <div class="row g-4">
+            <div class="col-md-12">
+                <h3>Participation Requests</h3>
+    
+                @if ($pendingRequests->isNotEmpty())
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Project Title</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pendingRequests as $request)
+                                @if ($request->artProjects->isNotEmpty())
+                                    @foreach ($request->artProjects as $artProject)
+                                        <tr>
+                                            <td>{{ $request->name }}</td>
+                                            <td>{{ $request->email }}</td>
+                                            <td>{{ $artProject->name }}</td>
+                                            <td>
+                                                <form action="{{ route('accept-participation', ['userId' => $request->id, 'projectId' => $artProject->id]) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                </form>
+    
+                                                <form action="{{ route('reject-participation', ['userId' => $request->id]) }}"
+                                                    method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td>{{ $request->name }}</td>
+                                        <td>{{ $request->email }}</td>
+                                        <td>N/A</td>
+                                        <td>
+                                            <form action="{{ route('accept-participation', ['userId' => $request->id]) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success">Accept</button>
+                                            </form>
+    
+                                            <form action="{{ route('reject-participation', ['userId' => $request->id]) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p>No pending participation requests.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+
 
     <div class="container-fluid pt-4 px-4" id="artists-section">
         <div class="container-fluid pt-4 px-4">
@@ -134,11 +205,13 @@
                                 <form id="addArtistForm">
                                     <div class="mb-3">
                                         <label for="artistName" class="form-label">Artist Name</label>
-                                        <input type="text" class="form-control" id="artistName" name="name" required>
+                                        <input type="text" class="form-control" id="artistName" name="name"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="artistEmail" class="form-label">Artist Email</label>
-                                        <input type="email" class="form-control" id="artistEmail" name="email" required>
+                                        <input type="email" class="form-control" id="artistEmail" name="email"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="artistPassword" class="form-label">Password</label>
@@ -237,7 +310,8 @@
                                         data-target="#deleteArtProjectModal_{{ $project->id }}">Delete</button>
 
                                     <!-- Assign button triggering a modal or an action -->
-                                    <a class="btn btn-sm btn-info" href="{{ route('assign.user', ['projectId' => $project->id, 'projectName' => $project->name, 'projectDescription' => $project->description]) }}">Assign</a>
+                                    <a class="btn btn-sm btn-info"
+                                        href="{{ route('assign.user', ['projectId' => $project->id, 'projectName' => $project->name, 'projectDescription' => $project->description]) }}">Assign</a>
 
                                 </td>
                             </tr>
@@ -267,12 +341,16 @@
                                                 <!-- Display existing project information -->
                                                 <div class="mb-3">
                                                     <label for="editProjectName" class="form-label">Project Name</label>
-                                                    <input type="text" class="form-control" id="editProjectName_{{ $project->id }}" name="name" value="{{ $project->name }}">
+                                                    <input type="text" class="form-control"
+                                                        id="editProjectName_{{ $project->id }}" name="name"
+                                                        value="{{ $project->name }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="editProjectDescription"
                                                         class="form-label">Description</label>
-                                                        <input type="text" class="form-control" id="editProjectDescription_{{ $project->id }}" name="description" value="{{ $project->description }}">
+                                                    <input type="text" class="form-control"
+                                                        id="editProjectDescription_{{ $project->id }}"
+                                                        name="description" value="{{ $project->description }}">
                                                 </div>
 
                                                 <!-- Display assigned artists -->
@@ -309,7 +387,10 @@
                                                             <p>No artists available.</p>
                                                         @else
                                                             @foreach ($availableArtists as $artist)
-                                                            <button type="button" class="btn btn-success" data-artist-id="{{ $artist->id }}" onclick="assignArtist('{{ $project->id }}', '{{ $artist->id }}', '{{ $artist->name }}')">Assign {{ $artist->name }}</button>
+                                                                <button type="button" class="btn btn-success"
+                                                                    data-artist-id="{{ $artist->id }}"
+                                                                    onclick="assignArtist('{{ $project->id }}', '{{ $artist->id }}', '{{ $artist->name }}')">Assign
+                                                                    {{ $artist->name }}</button>
                                                             @endforeach
                                                         @endif
                                                     </div>
@@ -319,27 +400,41 @@
                                                 <!-- Additional fields -->
                                                 <div class="mb-3">
                                                     <label for="editProjectStatus" class="form-label">Status</label>
-                                                    <select class="form-select" id="editProjectStatus_{{ $project->id }}" name="status">
-                                                        <option value="active"
-                                                            {{ $project->status === 'active' ? 'selected' : '' }}>Active
+                                                    <select class="form-select"
+                                                        id="editProjectStatus_{{ $project->id }}" name="status">
+                                                        <option value="On Going"
+                                                            {{ $project->status === 'On Going' ? 'selected' : '' }}>On
+                                                            Going</option>
+                                                        <option value="Completed"
+                                                            {{ $project->status === 'Completed' ? 'selected' : '' }}>
+                                                            Completed</option>
+                                                        <option value="On Hold"
+                                                            {{ $project->status === 'On Hold' ? 'selected' : '' }}>On Hold
                                                         </option>
-                                                        <option value="inactive"
-                                                            {{ $project->status === 'inactive' ? 'selected' : '' }}>
-                                                            Inactive</option>
+                                                        <option value="Planning"
+                                                            {{ $project->status === 'Planning' ? 'selected' : '' }}>
+                                                            Planning</option>
                                                     </select>
                                                 </div>
+
                                                 <div class="mb-3">
                                                     <label for="editProjectBudget" class="form-label">Budget</label>
-                                                    <input type="number" class="form-control" id="editProjectBudget_{{ $project->id }}" name="budget" value="{{ $project->budget }}">
+                                                    <input type="number" class="form-control"
+                                                        id="editProjectBudget_{{ $project->id }}" name="budget"
+                                                        value="{{ $project->budget }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="editProjectStartDate" class="form-label">Start
                                                         Date</label>
-                                                        <input type="date" class="form-control" id="editProjectStartDate_{{ $project->id }}" name="start_date" value="{{ $project->start_date }}">
+                                                    <input type="date" class="form-control"
+                                                        id="editProjectStartDate_{{ $project->id }}" name="start_date"
+                                                        value="{{ $project->start_date }}">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="editProjectEndDate" class="form-label">End Date</label>
-                                                    <input type="date" class="form-control" id="editProjectEndDate_{{ $project->id }}" name="end_date" value="{{ $project->end_date }}">
+                                                    <input type="date" class="form-control"
+                                                        id="editProjectEndDate_{{ $project->id }}" name="end_date"
+                                                        value="{{ $project->end_date }}">
                                                 </div>
 
                                                 <!-- Save changes button -->
@@ -712,33 +807,32 @@
         }
 
         // Example JavaScript code
-function assignArtist(projectId, artistId, artistName) {
-    // Your logic to assign the artist to the project
-    console.log(`Assigning artist ${artistName} to project ${projectId}, artist ID: ${artistId}`);
+        function assignArtist(projectId, artistId, artistName) {
+            // Your logic to assign the artist to the project
+            console.log(`Assigning artist ${artistName} to project ${projectId}, artist ID: ${artistId}`);
 
-    // Add the assigned artist to the UI
-    var assignedArtistsList = document.getElementById('assignedArtists');
-    var newArtistListItem = document.createElement('li');
-    newArtistListItem.textContent = artistName;
+            // Add the assigned artist to the UI
+            var assignedArtistsList = document.getElementById('assignedArtists');
+            var newArtistListItem = document.createElement('li');
+            newArtistListItem.textContent = artistName;
 
-    // Add a button to remove the assigned artist
-    var removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = 'btn btn-sm btn-danger';
-    removeButton.textContent = 'Remove';
-    removeButton.onclick = function() {
-        removeAssignedArtist(projectId, artistId);
-    };
+            // Add a button to remove the assigned artist
+            var removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'btn btn-sm btn-danger';
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function() {
+                removeAssignedArtist(projectId, artistId);
+            };
 
-    newArtistListItem.appendChild(removeButton);
-    assignedArtistsList.appendChild(newArtistListItem);
+            newArtistListItem.appendChild(removeButton);
+            assignedArtistsList.appendChild(newArtistListItem);
 
-    // Remove the "Assign" button for the assigned artist
-    var assignButton = document.querySelector(`[data-artist-id="${artistId}"]`);
-    if (assignButton) {
-        assignButton.parentNode.removeChild(assignButton);
-    }
-}
-
+            // Remove the "Assign" button for the assigned artist
+            var assignButton = document.querySelector(`[data-artist-id="${artistId}"]`);
+            if (assignButton) {
+                assignButton.parentNode.removeChild(assignButton);
+            }
+        }
     </script>
 @endsection

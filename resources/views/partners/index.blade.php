@@ -10,7 +10,7 @@
             @foreach ($partners as $partner)
                 <li>
                     <div class="logo-holder {{ $partner->class }}">
-                        <a href="{{ $partner->url }}">
+                        <a href="{{ route('partner.art-projects', ['partner' => $partner->id]) }}">
                             @if (isset($partner->icon))
                                 {{-- <i class="{{ $partner->icon }}"></i> --}}
                             @endif

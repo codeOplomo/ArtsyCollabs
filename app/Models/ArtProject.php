@@ -22,7 +22,9 @@ class ArtProject extends Model
     // ArtProject to Users relationship (many-to-many)
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot('request_status')
+            ->withTimestamps();
     }
 
     // ArtProject model

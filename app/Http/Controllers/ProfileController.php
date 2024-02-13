@@ -14,12 +14,14 @@ class ProfileController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    $user = User::where('id', auth()->user()->id)->first(); // Example: Get the logged-in user's data
-    // If you have a specific user profile to display, adjust the query accordingly
+    {
+        // Get the authenticated user with only accepted art projects
+        $user = User::with(['artProjects' => function ($query) {
+            $query->wherePivot('request_status', 'Accepted');
+        }])->find(auth()->user()->id);
 
-    return view('profiles.index', compact('user'));
-}
+        return view('profiles.index', compact('user'));
+    }
 
     /**
      * Show the form for creating a new resource.

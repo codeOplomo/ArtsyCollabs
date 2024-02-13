@@ -45,10 +45,21 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::resource('profile', ProfileController::class)->only(['index', 'store']);
-    Route::resource('art-projects', ArtProjectsController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('art-projects', ArtProjectsController::class)->only(['index', 'store', 'destroy', 'show']);
 
     Route::post('/assign-artist/{projectId}', [ArtProjectsController::class, 'assignArtist'])->name('assign-artist');
+    Route::delete('/leave-project/{projectId}', [ArtProjectsController::class, 'leaveProject'])->name('leave-project');
+    Route::post('/participate-project/{projectId}', [ArtProjectsController::class, 'participateProject'])->name('participate-project');
+    Route::post('/accept-participation/{userId}/{projectId}', [ArtProjectsController::class, 'acceptParticipation'])->name('accept-participation');
+
+    Route::post('/reject-participation/{userId}', [ArtProjectsController::class, 'rejectParticipation'])->name('reject-participation');
+
+
+
+
     Route::post('/assign-partner/{projectId}', [PartnersController::class, 'assignPartner'])->name('assign-partner');
+    Route::get('/partner/{partner}/art-projects', [PartnersController::class, 'artProjects'])->name('partner.art-projects');
+
 
 
     Route::resource('partners', PartnersController::class)->only(['index', 'store']);
@@ -60,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
 //     return view('dashboard.dashmin');
 // })->name('dashboard');
 
-    // Route::post('/art-projects/{projectId}/assign-artist/{artistId}', [ArtProjectsController::class, 'assignArtist']);
+// Route::post('/art-projects/{projectId}/assign-artist/{artistId}', [ArtProjectsController::class, 'assignArtist']);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 

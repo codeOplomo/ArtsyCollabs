@@ -108,9 +108,17 @@ class DashboardController extends Controller
         $partners = Partner::paginate(9);
         $user = Auth::user();
         $roles = Role::all();
+        
+        $pendingRequests = User::with(['artProjects' => function ($query) {
+            $query->where('request_status', 'Pending');
+        }])->whereHas('artProjects', function ($query) {
+            $query->where('request_status', 'Pending');
+        })->get();
+        
+        
 
         // Pass the users to the view
-        return view('dashboards.dashmin', compact('artists', 'artProjects', 'partners', 'user', 'roles'));
+        return view('dashboards.dashmin', compact('artists', 'artProjects', 'partners', 'user', 'roles', 'pendingRequests'));
     }
 
     /**

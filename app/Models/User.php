@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 // use \Laravel\Sanctum\HasApiTokens;
 // use Laravel\Sanctum\HasApiTokens;
 // use Laravel\Passport\HasApiTokens;
@@ -58,7 +59,9 @@ class User extends Authenticatable
     // User to ArtProjects relationship (many-to-many)
     public function artProjects()
     {
-        return $this->belongsToMany(ArtProject::class);
+        return $this->belongsToMany(ArtProject::class)
+            ->withPivot('request_status')
+            ->withTimestamps();
     }
 
     public function hasRole($role)

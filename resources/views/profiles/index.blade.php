@@ -1,5 +1,23 @@
 @extends('layouts.app')
 
+<style>
+    .project-item {
+        border-bottom: 1px solid #ddd;
+        /* Add a border between project items */
+        padding-bottom: 10px;
+        /* Adjust as needed */
+        margin-bottom: 10px;
+        /* Adjust as needed */
+        overflow: hidden;
+        /* Clear float */
+    }
+
+    .status {
+        float: right;
+        /* Add your status styling here */
+    }
+</style>
+
 @section('content')
     {{-- <div class="container">
         <h1>User Profile</h1>
@@ -8,25 +26,27 @@
 
     <section style="background-color: #eee;">
         <div class="container py-5" style="width: 100%">
-    
+
             <div class="row">
                 <div class="col-lg-4">
                     <div class="card mb-4">
                         <div class="card-body text-center">
-                            <img src="{{ $user->avatar_url }}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                            <img src="{{ $user->avatar_url }}" alt="avatar" class="rounded-circle img-fluid"
+                                style="width: 150px;">
                             <h5 class="my-3">{{ $user->name }}</h5>
                             <p class="text-muted mb-1">
                                 {{ optional($user->role)->id === 1 ? 'Admin' : (optional($user->role)->id === 2 ? 'Artist' : 'User Role') }}
                             </p>
-                            
-                             <!-- Assuming the role or title is stored in 'role' -->
-                            <p class="text-muted mb-4">{{ $user->location ?? 'User Location' }}</p> <!-- Assuming location information is stored in 'location' -->
+
+                            <!-- Assuming the role or title is stored in 'role' -->
+                            <p class="text-muted mb-4">{{ $user->location ?? 'User Location' }}</p>
+                            <!-- Assuming location information is stored in 'location' -->
                             <div class="d-flex justify-content-center mb-2">
                                 <button type="button" class="btn btn-primary">Follow</button>
                                 <button type="button" class="btn btn-outline-primary ms-1">Message</button>
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="card mb-4 mb-lg-0">
                         <div class="card-body p-0">
@@ -104,66 +124,52 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                            <p class="mb-4"><span class="text-primary font-italic me-1">Assignment</span> Project Status</p>
                     
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card mb-4 mb-md-0">
-                                <div class="card-body">
-                                    <p class="mb-4"><span class="text-primary font-italic me-1">assignment</span> Project Status</p>
-                                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            @if ($user->artProjects && $user->artProjects->isNotEmpty())
+                                @foreach ($user->artProjects as $project)
+                                    @php
+                                        $statusStyle = '';
+                                        switch ($project->status) {
+                                            case 'Completed':
+                                                $statusStyle = 'background-color: #4CAF50; color: white; border-radius: 5px;';
+                                                break;
+                                            case 'On Going':
+                                                $statusStyle = 'background-color: #2196F3; color: white; border-radius: 5px;';
+                                                break;
+                                            case 'On Hold':
+                                                $statusStyle = 'background-color: #FF5733; color: white; border-radius: 5px;';
+                                                break;
+                                            case 'Planning':
+                                                $statusStyle = 'background-color: #FFD700; color: black; border-radius: 5px;';
+                                                break;
+                                            default:
+                                                // Handle other cases or set a default style
+                                                break;
+                                        }
+                                    @endphp
+                    
+                                    <div class="project-item">
+                                        <span class="float-start clickable" style="cursor: pointer;" onclick="window.location='{{ route('art-projects.show', ['art_project' => $project->id]) }}';">
+                                            {{ $project->name }}
+                                        </span>
+                                        
+                                        <span class="float-end status"
+                                            style="{{ $statusStyle }}">{{ $project->status }}</span>
                                     </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                                    <div class="progress rounded mb-2" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card mb-4 mb-md-0">
-                                <div class="card-body">
-                                    <p class="mb-4"><span class="text-primary font-italic me-1">assignment</span> Project Status</p>
-                                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                                    <div class="progress rounded" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                                    <div class="progress rounded mb-2" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
+                                @endforeach
+                            @else
+                                <p>No assigned projects</p>
+                            @endif
                         </div>
                     </div>
+                    
+
                 </div>
             </div>
         </div>
     </section>
-    
+
 @endsection

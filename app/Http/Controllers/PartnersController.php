@@ -8,10 +8,16 @@ use Illuminate\Http\Request;
 
 class PartnersController extends Controller
 {
+    // PartnerController.php
 
-    // DashboardController.php
+    public function artProjects(Partner $partner)
+    {
+        // Load the associated art projects and artists
+        $artProjects = $partner->artProjects()->with('users')->get();
 
-    
+        return view('partners.artProjects', compact('partner', 'artProjects'));
+    }
+
 
     /**
      * Display a listing of the resource.
