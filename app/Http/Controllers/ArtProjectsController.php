@@ -6,9 +6,29 @@ use App\Models\ArtProject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ArtProjectsController extends Controller
 {
+
+    public function rejectParticipation($userId, $projectId)
+{
+    try {
+        $user = User::find($userId);
+        $project = ArtProject::find($projectId);
+
+        if ($user && $project) {
+            $user->artProjects()->updateExistingPivot($projectId, ['request_status' => 'Rejected']);
+
+            return redirect()->back()->with('success', 'Participation request rejected successfully.');
+        } else {
+            return redirect()->back()->with('error', 'User or project not found.');
+        }
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+    }
+}
+
 
     public function acceptParticipation($userId, $projectId)
     {
@@ -52,31 +72,32 @@ class ArtProjectsController extends Controller
     }
 
     public function leaveProject(Request $request, $projectId)
-    {
-        try {
-            $user = Auth::user();
-            $artProject = ArtProject::find($projectId);
+{
+    try {
+        $user = Auth::user();
+        $artProject = ArtProject::find($projectId);
 
-            // Check if the user and art project exist
-            if (!$user || !$artProject) {
-                return redirect()->back()->with('error', 'Invalid user or art project');
-            }
-
-            // Check if the user is in the project
-            if ($artProject->users->contains($user)) {
-                // Detach the user from the art project
-                $artProject->users()->detach($user->id);
-
-                return redirect()->back()->with('success', 'Left the art project successfully');
-            }
-
-            return redirect()->back()->with('error', 'You are not in this art project');
-        } catch (\Exception $e) {
-            \Log::error($e);
-
-            return redirect()->back()->with('error', 'Failed to leave the art project');
+        // Check if the user and art project exist
+        if (!$user || !$artProject) {
+            return redirect()->back()->with('error', 'Invalid user or art project');
         }
+
+        // Check if the user is in the project
+        if ($artProject->users->contains($user)) {
+            // Detach the user from the art project
+            $artProject->users()->detach($user->id);
+
+            return redirect()->back()->with('success', 'Left the art project successfully');
+        }
+
+        return redirect()->back()->with('error', 'You are not in this art project');
+    } catch (\Exception $e) {
+        \Log::error($e);
+
+        return redirect()->back()->with('error', 'Failed to leave the art project');
     }
+}
+
 
 
     public function assignArtist($projectId, $artistId)
@@ -125,31 +146,44 @@ class ArtProjectsController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        try {
-            $rules = [
-                'name' => 'required|string',
-                'description' => 'required|string',
-                'budget' => 'required|numeric',
-                'status' => 'required|in:On Going,Completed,On Hold,Planning',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
-            ];
+{
+    try {
+        $rules = [
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'budget' => 'required|numeric',
+            'status' => 'required|in:On Going,Completed,On Hold,Planning',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            // 'media' => 'array', // Assuming you have a form field named 'media' for file uploads
+            // 'media.*' => 'file|mimes:jpeg,png,gif,bmp,tiff,webp,avif',
+        ];
+
+        $request->validate($rules);
+
+        $artProject = ArtProject::create($request->all());
 
 
-            $request->validate($rules);
+        // $artProject = ArtProject::create($request->except('media'));
 
-            $artProject = ArtProject::create($request->all());
+        // if ($request->hasFile('media')) {
+        //     foreach ($request->file('media') as $file) {
+        //         $artProject->addMedia($file)
+        //             ->withResponsiveImages()
+        //             ->toMediaCollection();
+        //     }
+        // }
 
-            // Optionally, you can associate users or partners with the art project
-            // $artProject->users()->sync($request->input('user_ids'));
-            // $artProject->partners()->sync($request->input('partner_ids'));
 
-            return response()->json(['success' => true, 'message' => 'Art project successfully created.', 'artProject' => $artProject]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()]);
-        }
+        // Optionally, you can associate users or partners with the art project
+        // $artProject->users()->sync($request->input('user_ids'));
+        // $artProject->partners()->sync($request->input('partner_ids'));
+
+        return response()->json(['success' => true, 'message' => 'Art project successfully created.', 'artProject' => $artProject]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
+}
 
 
     /**

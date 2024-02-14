@@ -6,6 +6,7 @@ use App\Models\ArtProject;
 use App\Models\Partner;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException as LaravelValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -108,17 +109,27 @@ class DashboardController extends Controller
         $partners = Partner::paginate(9);
         $user = Auth::user();
         $roles = Role::all();
-        
-        $pendingRequests = User::with(['artProjects' => function ($query) {
+
+
+        // $totalRequests = ArtProjectUser::where('request_status', 'Pending')->count();
+        $totalRequests = DB::table('art_project_user')->count();
+        $totalPartners = Partner::count();
+        $totalUsers = User::where('id', '!=', auth()->id())->count();
+        $totalProjects = ArtProject::count();
+
+        $pendingRequests = User::whereHas('artProjects', function ($query) {
             $query->where('request_status', 'Pending');
-        }])->whereHas('artProjects', function ($query) {
-            $query->where('request_status', 'Pending');
-        })->get();
-        
-        
+        })->with([
+                    'artProjects' => function ($query) {
+                        $query->where('request_status', 'Pending');
+                    }
+                ])->get();
+
+
+
 
         // Pass the users to the view
-        return view('dashboards.dashmin', compact('artists', 'artProjects', 'partners', 'user', 'roles', 'pendingRequests'));
+        return view('dashboards.dashmin', compact('artists', 'artProjects', 'partners', 'user', 'roles', 'pendingRequests', 'totalRequests', 'totalPartners', 'totalUsers', 'totalProjects'));
     }
 
     /**

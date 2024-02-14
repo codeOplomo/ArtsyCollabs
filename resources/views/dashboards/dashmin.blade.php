@@ -5,48 +5,52 @@
         <div class="row g-4">
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-line fa-3x text-primary"></i>
+                    <i class="fa fa-inbox fa-3x text-primary"></i> <!-- Change the icon as needed -->
                     <div class="ms-3">
-                        <p class="mb-2">Today Sale</p>
-                        <h5 class="mb-0">$1234</h5>
+                        <p class="mb-2">Total Requests</p>
+                        <h5 class="mb-0">{{ $totalRequests }}</h5>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                    <i class="fa fa-users fa-3x text-primary"></i> <!-- Change the icon as needed -->
                     <div class="ms-3">
-                        <p class="mb-2">Total Sale</p>
-                        <h5 class="mb-0">$1234</h5>
+                        <p class="mb-2">Total Partners</p>
+                        <h5 class="mb-0">{{ $totalPartners }}</h5>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-area fa-3x text-primary"></i>
+                    <i class="fa fa-user fa-3x text-primary"></i> <!-- Change the icon as needed -->
                     <div class="ms-3">
-                        <p class="mb-2">Today Revenue</p>
-                        <h5 class="mb-0">$1234</h5>
+                        <p class="mb-2">Total Users</p>
+                        <h5 class="mb-0">{{ $totalUsers }}</h5>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
                 <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                    <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                    <i class="fa fa-briefcase fa-3x text-primary"></i> <!-- Change the icon as needed -->
                     <div class="ms-3">
-                        <p class="mb-2">Total Revenue</p>
-                        <h5 class="mb-0">$1234</h5>
+                        <p class="mb-2">Total Projects</p>
+                        <h5 class="mb-0">{{ $totalProjects }}</h5>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+
     <div class="container-fluid pt-4 px-4" id="content-container">
+        <div class="container-fluid pt-4 px-4">
+            <div class="h-100 bg-light rounded p-4">
+
         <div class="row g-4">
             <div class="col-md-12">
                 <h3>Participation Requests</h3>
-    
+
                 @if ($pendingRequests->isNotEmpty())
                     <table class="table table-bordered">
                         <thead>
@@ -59,59 +63,44 @@
                         </thead>
                         <tbody>
                             @foreach ($pendingRequests as $request)
-                                @if ($request->artProjects->isNotEmpty())
-                                    @foreach ($request->artProjects as $artProject)
-                                        <tr>
-                                            <td>{{ $request->name }}</td>
-                                            <td>{{ $request->email }}</td>
-                                            <td>{{ $artProject->name }}</td>
-                                            <td>
-                                                <form action="{{ route('accept-participation', ['userId' => $request->id, 'projectId' => $artProject->id]) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-success">Accept</button>
-                                                </form>
-    
-                                                <form action="{{ route('reject-participation', ['userId' => $request->id]) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-danger">Reject</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
+                                @foreach ($request->artProjects as $artProject)
                                     <tr>
                                         <td>{{ $request->name }}</td>
                                         <td>{{ $request->email }}</td>
-                                        <td>N/A</td>
+                                        <td>{{ $artProject->name }}</td>
                                         <td>
-                                            <form action="{{ route('accept-participation', ['userId' => $request->id]) }}"
-                                                method="POST" class="d-inline">
+                                            <form
+                                                action="{{ route('accept-participation', ['userId' => $request->id, 'projectId' => $artProject->id]) }}"
+                                                method="POST">
                                                 @csrf
                                                 <button type="submit" class="btn btn-success">Accept</button>
                                             </form>
-    
-                                            <form action="{{ route('reject-participation', ['userId' => $request->id]) }}"
+
+                                            <form
+                                                action="{{ route('reject-participation', ['userId' => $request->id, 'projectId' => $artProject->id]) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="btn btn-danger">Reject</button>
                                             </form>
                                         </td>
                                     </tr>
-                                @endif
+                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
                 @else
                     <p>No pending participation requests.</p>
                 @endif
+
             </div>
         </div>
+        </div>
+        </div>
     </div>
-    
-    
-    
-    
+
+
+
+
 
 
     <div class="container-fluid pt-4 px-4" id="artists-section">
@@ -576,12 +565,19 @@
                                         <input type="number" class="form-control" name="budget"
                                             id="artProjectBudgetInput" placeholder="Enter budget">
                                     </div>
+                                    {{-- <div class="mb-3">
+                                        <label for="artProjectImagesInput" class="form-label">Project Images</label>
+                                        <input type="file" class="form-control" name="media[]" id="artProjectImagesInput" accept="image/*" multiple>
+                                        <!-- 'accept' attribute is used to specify that only image files are allowed -->
+                                    </div> --}}
                                     <div class="mb-3">
                                         <label for="artProjectStatusInput" class="form-label">Status</label>
                                         <select class="form-select" name="status" id="artProjectStatusInput">
                                             <option value="" disabled selected>Select Status</option>
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
+                                            <option value="On Hold">On Hold</option>
+                                            <option value="Planning">Planning</option>
+                                            <option value="On Going">On Going</option>
+                                            <option value="Completed">Completed</option>
                                         </select>
                                     </div>
 

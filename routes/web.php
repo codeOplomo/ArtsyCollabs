@@ -52,7 +52,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/participate-project/{projectId}', [ArtProjectsController::class, 'participateProject'])->name('participate-project');
     Route::post('/accept-participation/{userId}/{projectId}', [ArtProjectsController::class, 'acceptParticipation'])->name('accept-participation');
 
-    Route::post('/reject-participation/{userId}', [ArtProjectsController::class, 'rejectParticipation'])->name('reject-participation');
+    Route::post('/reject-participation/{userId}/{projectId}', [ArtProjectsController::class, 'rejectParticipation'])->name('reject-participation');
+    
+
+
 
 
 
